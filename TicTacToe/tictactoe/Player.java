@@ -2,9 +2,9 @@ package tictactoe;
 
 public class Player {
 	private int id;
-	private MarkEnum assignedMark;
+	private Mark assignedMark;
 
-	public Player(int id, MarkEnum assignedMark) {
+	public Player(int id, Mark assignedMark) {
 		this.id = id;
 		this.assignedMark = assignedMark;
 	}
@@ -17,11 +17,11 @@ public class Player {
 		this.id = id;
 	}
 
-	public MarkEnum getAssignedMark() {
+	public Mark getAssignedMark() {
 		return assignedMark;
 	}
 
-	public void setAssignedMark(MarkEnum assignedMark) {
+	public void setAssignedMark(Mark assignedMark) {
 		this.assignedMark = assignedMark;
 	}
 

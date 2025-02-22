@@ -2,6 +2,7 @@ package tictactoe;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Scanner;
 
 public class Game {
 	private Board board;
@@ -16,11 +17,65 @@ public class Game {
 		this.board = new Board(3);
 		playersQueue = new ArrayDeque<Player>();
 
-		Player player1 = new Player(1, MarkEnum.X);
-		Player player2 = new Player(0, MarkEnum.O);
+		Player player1 = new Player(1, new MarkO());
+		Player player2 = new Player(0, new MarkX());
 
 		playersQueue.addLast(player2);
 		playersQueue.addLast(player1);
+
+	}
+
+	public void startGame() {
+		System.out.println("Welcome to the tic tac toe game");
+
+		Scanner scanner = new Scanner(System.in);
+
+		try {
+
+			while (true) {
+
+				if (!board.isPlayable()) {
+					System.out.println("Game Over.");
+				}
+
+				Player currPlayer = getNextPlayer();
+
+				System.out.println("Your turn player " + currPlayer.getId());
+
+				playTurnForCurrPlayer(currPlayer, scanner);
+
+				movePlayerToLast(currPlayer);
+
+				board.printBoard();
+
+				if (hasPlayerWon(currPlayer)) {
+					System.out.println("Congrats, You have won...");
+					break;
+				}
+
+				System.out.println();
+			}
+		} finally {
+			scanner.close();
+		}
+	}
+
+	private void playTurnForCurrPlayer(Player currPlayer, Scanner scanner) {
+		while (true) {
+
+			System.out.println("Please enter position");
+			int xPos = scanner.nextInt();
+			int yPos = scanner.nextInt();
+
+			if (!board.isPositionPlayable(xPos, yPos)) {
+				System.out.println("Invalid Position.");
+				continue;
+			}
+			
+			board.markPositionForPlayer(xPos, yPos, currPlayer.getAssignedMark());
+
+			return;
+		}
 
 	}
 
@@ -43,39 +98,6 @@ public class Game {
 
 	public void setPlayersQueue(Deque<Player> playersQueue) {
 		this.playersQueue = playersQueue;
-	}
-
-	public boolean isPositionPlayable(int xPos, int yPos) {
-		if (xPos < 0 || yPos < 0 || xPos >= board.getSize() || yPos >= board.getSize()) {
-			return false;
-		}
-
-		if (board.isPositionAlreadyPlayed(xPos, yPos)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public void markPositionForPlayer(int xPos, int yPos, Player currPlayer) {
-		board.markPositionForPlayer(xPos, yPos, currPlayer.getAssignedMark());
-
-	}
-
-	public void printBoard() {
-
-		for (int i = 0; i < board.getSize(); i++) {
-			for (int j = 0; j < board.getSize(); j++) {
-				if (board.getBoardGrid()[i][j] == null) {
-					System.out.print(" ");
-				} else {
-					System.out.print(board.getBoardGrid()[i][j]);
-				}
-				System.out.print(" ");
-			}
-			System.out.println();
-		}
-
 	}
 
 	public boolean hasPlayerWon(Player currPlayer) {
@@ -102,7 +124,7 @@ public class Game {
 
 	}
 
-	private boolean isColumnMarkedWith(int col, MarkEnum mark) {
+	private boolean isColumnMarkedWith(int col, Mark mark) {
 		for (int i = 0; i < board.getSize(); i++) {
 			if (board.getBoardGrid()[i][col] == null || board.getBoardGrid()[i][col] != mark) {
 				return false;
@@ -112,7 +134,7 @@ public class Game {
 		return true;
 	}
 
-	private boolean isRowMarkedWith(int row, MarkEnum mark) {
+	private boolean isRowMarkedWith(int row, Mark mark) {
 		for (int i = 0; i < board.getSize(); i++) {
 			if (board.getBoardGrid()[row][i] == null || board.getBoardGrid()[row][i] != mark) {
 				return false;
@@ -122,7 +144,7 @@ public class Game {
 		return true;
 	}
 
-	private boolean isLeftToRightDiagonalMarkedWith(MarkEnum mark) {
+	private boolean isLeftToRightDiagonalMarkedWith(Mark mark) {
 		for (int i = 0; i < board.getSize(); i++) {
 			if (board.getBoardGrid()[i][i] == null || board.getBoardGrid()[i][i] != mark) {
 				return false;
@@ -131,7 +153,7 @@ public class Game {
 		return true;
 	}
 
-	private boolean isRightToLeftDiagonalMarkedWith(MarkEnum mark) {
+	private boolean isRightToLeftDiagonalMarkedWith(Mark mark) {
 		for (int i = 0; i < board.getSize(); i++) {
 			if (board.getBoardGrid()[i][board.getSize() - i - 1] == null
 					|| board.getBoardGrid()[i][board.getSize() - i - 1] != mark) {
@@ -144,14 +166,6 @@ public class Game {
 	public void movePlayerToLast(Player currPlayer) {
 		playersQueue.addLast(currPlayer);
 
-	}
-
-	public boolean isBoardPlayable() {
-		if(board.getPositionsTaken()==board.getSize()*board.getSize()) {
-			return false;
-		}
-		
-		return true;
 	}
 
 }
